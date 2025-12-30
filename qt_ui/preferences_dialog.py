@@ -98,6 +98,20 @@ class PreferencesDialog(QDialog, Ui_PreferencesDialog):
         if role == QDialogButtonBox.RejectRole:
             self.reject()
 
+    def _setup_gamepad_button_combo(self, combo, current_value):
+        """Setup a gamepad button mapping combo box"""
+        combo.clear()
+        current_index = 0
+        for i, (value, label) in enumerate(self._gamepad_button_options):
+            combo.addItem(label, value)
+            if value == current_value:
+                current_index = i
+        combo.setCurrentIndex(current_index)
+
+    def _get_gamepad_button_combo_value(self, combo):
+        """Get the selected button value from a combo box"""
+        return combo.currentData()
+
     def loadSettings(self):
         # network settings
         self.gb_websocket_server.setChecked(qt_ui.settings.websocket_enabled.get())
@@ -119,6 +133,50 @@ class PreferencesDialog(QDialog, Ui_PreferencesDialog):
         self.gb_buttplug_wsdm.setChecked(qt_ui.settings.buttplug_wsdm_enabled.get())
         self.buttplug_wsdm_address.setText(qt_ui.settings.buttplug_wsdm_address.get())
         self.buttplug_wsdm_auto_expand.setChecked(qt_ui.settings.buttplug_wsdm_auto_expand.get())
+
+        # gamepad settings
+        self.gb_gamepad.setChecked(qt_ui.settings.gamepad_enabled.get())
+        self.gamepad_dead_zone.setValue(int(qt_ui.settings.gamepad_dead_zone.get() * 100))
+        self.gamepad_invert_vertical.setChecked(qt_ui.settings.gamepad_invert_vertical.get())
+        self.gamepad_invert_horizontal.setChecked(qt_ui.settings.gamepad_invert_horizontal.get())
+        self.gamepad_carrier_step.setValue(qt_ui.settings.gamepad_carrier_step.get())
+        self.gamepad_volume_step.setValue(qt_ui.settings.gamepad_volume_step.get())
+        self.gamepad_pulse_frequency_step.setValue(qt_ui.settings.gamepad_pulse_frequency_step.get())
+        self.gamepad_pulse_width_step.setValue(qt_ui.settings.gamepad_pulse_width_step.get())
+        self.gamepad_repeat_rate.setValue(qt_ui.settings.gamepad_repeat_rate.get())
+
+        # gamepad button mappings
+        self._gamepad_button_options = [
+            ("none", "None"),
+            ("lb", "LB"),
+            ("rb", "RB"),
+            ("lt", "LT"),
+            ("rt", "RT"),
+            ("a", "A"),
+            ("b", "B"),
+            ("x", "X"),
+            ("y", "Y"),
+            ("dpad_up", "D-pad Up"),
+            ("dpad_down", "D-pad Down"),
+            ("dpad_left", "D-pad Left"),
+            ("dpad_right", "D-pad Right"),
+            ("start", "Start"),
+            ("select", "Select"),
+            ("l3", "L3"),
+            ("r3", "R3"),
+        ]
+        self._setup_gamepad_button_combo(self.gamepad_btn_carrier_up, qt_ui.settings.gamepad_btn_carrier_up.get())
+        self._setup_gamepad_button_combo(self.gamepad_btn_carrier_down, qt_ui.settings.gamepad_btn_carrier_down.get())
+        self._setup_gamepad_button_combo(self.gamepad_btn_volume_up, qt_ui.settings.gamepad_btn_volume_up.get())
+        self._setup_gamepad_button_combo(self.gamepad_btn_volume_down, qt_ui.settings.gamepad_btn_volume_down.get())
+        self._setup_gamepad_button_combo(self.gamepad_btn_pulse_freq_up, qt_ui.settings.gamepad_btn_pulse_freq_up.get())
+        self._setup_gamepad_button_combo(self.gamepad_btn_pulse_freq_down, qt_ui.settings.gamepad_btn_pulse_freq_down.get())
+        self._setup_gamepad_button_combo(self.gamepad_btn_pulse_width_up, qt_ui.settings.gamepad_btn_pulse_width_up.get())
+        self._setup_gamepad_button_combo(self.gamepad_btn_pulse_width_down, qt_ui.settings.gamepad_btn_pulse_width_down.get())
+        self._setup_gamepad_button_combo(self.gamepad_btn_shock, qt_ui.settings.gamepad_btn_shock.get())
+        self._setup_gamepad_button_combo(self.gamepad_btn_mute, qt_ui.settings.gamepad_btn_mute.get())
+        self.gamepad_shock_volume.setValue(qt_ui.settings.gamepad_shock_volume.get())
+        self.gamepad_shock_duration.setValue(qt_ui.settings.gamepad_shock_duration.get())
 
         # audio settings
         hostapi_name = qt_ui.settings.audio_api.get()
@@ -293,6 +351,29 @@ class PreferencesDialog(QDialog, Ui_PreferencesDialog):
         qt_ui.settings.buttplug_wsdm_enabled.set(self.gb_buttplug_wsdm.isChecked())
         qt_ui.settings.buttplug_wsdm_address.set(self.buttplug_wsdm_address.text())
         qt_ui.settings.buttplug_wsdm_auto_expand.set(self.buttplug_wsdm_auto_expand.isChecked())
+
+        # gamepad
+        qt_ui.settings.gamepad_enabled.set(self.gb_gamepad.isChecked())
+        qt_ui.settings.gamepad_dead_zone.set(self.gamepad_dead_zone.value() / 100.0)
+        qt_ui.settings.gamepad_invert_vertical.set(self.gamepad_invert_vertical.isChecked())
+        qt_ui.settings.gamepad_invert_horizontal.set(self.gamepad_invert_horizontal.isChecked())
+        qt_ui.settings.gamepad_carrier_step.set(self.gamepad_carrier_step.value())
+        qt_ui.settings.gamepad_volume_step.set(self.gamepad_volume_step.value())
+        qt_ui.settings.gamepad_pulse_frequency_step.set(self.gamepad_pulse_frequency_step.value())
+        qt_ui.settings.gamepad_pulse_width_step.set(self.gamepad_pulse_width_step.value())
+        qt_ui.settings.gamepad_repeat_rate.set(self.gamepad_repeat_rate.value())
+        qt_ui.settings.gamepad_btn_carrier_up.set(self._get_gamepad_button_combo_value(self.gamepad_btn_carrier_up))
+        qt_ui.settings.gamepad_btn_carrier_down.set(self._get_gamepad_button_combo_value(self.gamepad_btn_carrier_down))
+        qt_ui.settings.gamepad_btn_volume_up.set(self._get_gamepad_button_combo_value(self.gamepad_btn_volume_up))
+        qt_ui.settings.gamepad_btn_volume_down.set(self._get_gamepad_button_combo_value(self.gamepad_btn_volume_down))
+        qt_ui.settings.gamepad_btn_pulse_freq_up.set(self._get_gamepad_button_combo_value(self.gamepad_btn_pulse_freq_up))
+        qt_ui.settings.gamepad_btn_pulse_freq_down.set(self._get_gamepad_button_combo_value(self.gamepad_btn_pulse_freq_down))
+        qt_ui.settings.gamepad_btn_pulse_width_up.set(self._get_gamepad_button_combo_value(self.gamepad_btn_pulse_width_up))
+        qt_ui.settings.gamepad_btn_pulse_width_down.set(self._get_gamepad_button_combo_value(self.gamepad_btn_pulse_width_down))
+        qt_ui.settings.gamepad_btn_shock.set(self._get_gamepad_button_combo_value(self.gamepad_btn_shock))
+        qt_ui.settings.gamepad_btn_mute.set(self._get_gamepad_button_combo_value(self.gamepad_btn_mute))
+        qt_ui.settings.gamepad_shock_volume.set(self.gamepad_shock_volume.value())
+        qt_ui.settings.gamepad_shock_duration.set(self.gamepad_shock_duration.value())
 
         # audio devices
         qt_ui.settings.audio_api.set(self.audio_api.currentText())

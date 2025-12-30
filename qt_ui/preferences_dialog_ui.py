@@ -314,11 +314,6 @@ class Ui_PreferencesDialog(object):
         self.groupBox_10.setObjectName(u"groupBox_10")
         self.gridLayout_7 = QGridLayout(self.groupBox_10)
         self.gridLayout_7.setObjectName(u"gridLayout_7")
-        self.label_22 = QLabel(self.groupBox_10)
-        self.label_22.setObjectName(u"label_22")
-
-        self.gridLayout_7.addWidget(self.label_22, 3, 0, 1, 1)
-
         self.focstim_ssid = QLineEdit(self.groupBox_10)
         self.focstim_ssid.setObjectName(u"focstim_ssid")
 
@@ -334,11 +329,6 @@ class Ui_PreferencesDialog(object):
 
         self.gridLayout_7.addWidget(self.label_21, 1, 0, 1, 1)
 
-        self.focstim_read_ip = QToolButton(self.groupBox_10)
-        self.focstim_read_ip.setObjectName(u"focstim_read_ip")
-
-        self.gridLayout_7.addWidget(self.focstim_read_ip, 3, 2, 1, 1)
-
         self.focstim_password = QLineEdit(self.groupBox_10)
         self.focstim_password.setObjectName(u"focstim_password")
 
@@ -352,7 +342,17 @@ class Ui_PreferencesDialog(object):
         self.focstim_ip = QLineEdit(self.groupBox_10)
         self.focstim_ip.setObjectName(u"focstim_ip")
 
-        self.gridLayout_7.addWidget(self.focstim_ip, 3, 1, 1, 1)
+        self.gridLayout_7.addWidget(self.focstim_ip, 4, 1, 1, 1)
+
+        self.label_22 = QLabel(self.groupBox_10)
+        self.label_22.setObjectName(u"label_22")
+
+        self.gridLayout_7.addWidget(self.label_22, 4, 0, 1, 1)
+
+        self.focstim_read_ip = QToolButton(self.groupBox_10)
+        self.focstim_read_ip.setObjectName(u"focstim_read_ip")
+
+        self.gridLayout_7.addWidget(self.focstim_read_ip, 4, 2, 1, 1)
 
 
         self.verticalLayout_5.addWidget(self.groupBox_10)
@@ -361,15 +361,15 @@ class Ui_PreferencesDialog(object):
         self.groupBox_9.setObjectName(u"groupBox_9")
         self.formLayout_8 = QFormLayout(self.groupBox_9)
         self.formLayout_8.setObjectName(u"formLayout_8")
-        self.label_18 = QLabel(self.groupBox_9)
-        self.label_18.setObjectName(u"label_18")
+        self.label_15 = QLabel(self.groupBox_9)
+        self.label_15.setObjectName(u"label_15")
 
-        self.formLayout_8.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_18)
+        self.formLayout_8.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_15)
 
-        self.focstim_dump_notifications = QCheckBox(self.groupBox_9)
-        self.focstim_dump_notifications.setObjectName(u"focstim_dump_notifications")
+        self.focstim_use_teleplot = QCheckBox(self.groupBox_9)
+        self.focstim_use_teleplot.setObjectName(u"focstim_use_teleplot")
 
-        self.formLayout_8.setWidget(2, QFormLayout.ItemRole.FieldRole, self.focstim_dump_notifications)
+        self.formLayout_8.setWidget(0, QFormLayout.ItemRole.FieldRole, self.focstim_use_teleplot)
 
         self.label_16 = QLabel(self.groupBox_9)
         self.label_16.setObjectName(u"label_16")
@@ -381,15 +381,15 @@ class Ui_PreferencesDialog(object):
 
         self.formLayout_8.setWidget(1, QFormLayout.ItemRole.FieldRole, self.focstim_teleplot_prefix)
 
-        self.label_15 = QLabel(self.groupBox_9)
-        self.label_15.setObjectName(u"label_15")
+        self.label_18 = QLabel(self.groupBox_9)
+        self.label_18.setObjectName(u"label_18")
 
-        self.formLayout_8.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_15)
+        self.formLayout_8.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_18)
 
-        self.focstim_use_teleplot = QCheckBox(self.groupBox_9)
-        self.focstim_use_teleplot.setObjectName(u"focstim_use_teleplot")
+        self.focstim_dump_notifications = QCheckBox(self.groupBox_9)
+        self.focstim_dump_notifications.setObjectName(u"focstim_dump_notifications")
 
-        self.formLayout_8.setWidget(0, QFormLayout.ItemRole.FieldRole, self.focstim_use_teleplot)
+        self.formLayout_8.setWidget(2, QFormLayout.ItemRole.FieldRole, self.focstim_dump_notifications)
 
 
         self.verticalLayout_5.addWidget(self.groupBox_9)
@@ -675,6 +675,268 @@ class Ui_PreferencesDialog(object):
         self.verticalLayout_9.addWidget(self.patterns_table)
 
         self.tabWidget.addTab(self.tab_patterns, "")
+        self.tab_gamepad = QWidget()
+        self.tab_gamepad.setObjectName(u"tab_gamepad")
+        self.verticalLayout_10 = QVBoxLayout(self.tab_gamepad)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.gb_gamepad = QGroupBox(self.tab_gamepad)
+        self.gb_gamepad.setObjectName(u"gb_gamepad")
+        self.gb_gamepad.setCheckable(True)
+        self.formLayout_9 = QFormLayout(self.gb_gamepad)
+        self.formLayout_9.setObjectName(u"formLayout_9")
+        self.label_28 = QLabel(self.gb_gamepad)
+        self.label_28.setObjectName(u"label_28")
+
+        self.formLayout_9.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_28)
+
+        self.gamepad_dead_zone = QSpinBox(self.gb_gamepad)
+        self.gamepad_dead_zone.setObjectName(u"gamepad_dead_zone")
+        self.gamepad_dead_zone.setMinimum(0)
+        self.gamepad_dead_zone.setMaximum(50)
+        self.gamepad_dead_zone.setValue(15)
+
+        self.formLayout_9.setWidget(0, QFormLayout.ItemRole.FieldRole, self.gamepad_dead_zone)
+
+        self.label_29 = QLabel(self.gb_gamepad)
+        self.label_29.setObjectName(u"label_29")
+
+        self.formLayout_9.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_29)
+
+        self.gamepad_invert_vertical = QCheckBox(self.gb_gamepad)
+        self.gamepad_invert_vertical.setObjectName(u"gamepad_invert_vertical")
+
+        self.formLayout_9.setWidget(1, QFormLayout.ItemRole.FieldRole, self.gamepad_invert_vertical)
+
+        self.label_30 = QLabel(self.gb_gamepad)
+        self.label_30.setObjectName(u"label_30")
+
+        self.formLayout_9.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_30)
+
+        self.gamepad_invert_horizontal = QCheckBox(self.gb_gamepad)
+        self.gamepad_invert_horizontal.setObjectName(u"gamepad_invert_horizontal")
+
+        self.formLayout_9.setWidget(2, QFormLayout.ItemRole.FieldRole, self.gamepad_invert_horizontal)
+
+        self.label_35 = QLabel(self.gb_gamepad)
+        self.label_35.setObjectName(u"label_35")
+
+        self.formLayout_9.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_35)
+
+        self.gamepad_carrier_step = QDoubleSpinBox(self.gb_gamepad)
+        self.gamepad_carrier_step.setObjectName(u"gamepad_carrier_step")
+        self.gamepad_carrier_step.setMinimum(0.100000000000000)
+        self.gamepad_carrier_step.setMaximum(1000.000000000000000)
+        self.gamepad_carrier_step.setSingleStep(1.000000000000000)
+        self.gamepad_carrier_step.setValue(10.000000000000000)
+
+        self.formLayout_9.setWidget(3, QFormLayout.ItemRole.FieldRole, self.gamepad_carrier_step)
+
+        self.label_36 = QLabel(self.gb_gamepad)
+        self.label_36.setObjectName(u"label_36")
+
+        self.formLayout_9.setWidget(4, QFormLayout.ItemRole.LabelRole, self.label_36)
+
+        self.gamepad_volume_step = QDoubleSpinBox(self.gb_gamepad)
+        self.gamepad_volume_step.setObjectName(u"gamepad_volume_step")
+        self.gamepad_volume_step.setMinimum(0.100000000000000)
+        self.gamepad_volume_step.setMaximum(100.000000000000000)
+        self.gamepad_volume_step.setSingleStep(0.500000000000000)
+        self.gamepad_volume_step.setValue(1.000000000000000)
+
+        self.formLayout_9.setWidget(4, QFormLayout.ItemRole.FieldRole, self.gamepad_volume_step)
+
+        self.label_37 = QLabel(self.gb_gamepad)
+        self.label_37.setObjectName(u"label_37")
+
+        self.formLayout_9.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_37)
+
+        self.gamepad_pulse_frequency_step = QDoubleSpinBox(self.gb_gamepad)
+        self.gamepad_pulse_frequency_step.setObjectName(u"gamepad_pulse_frequency_step")
+        self.gamepad_pulse_frequency_step.setMinimum(0.100000000000000)
+        self.gamepad_pulse_frequency_step.setMaximum(100.000000000000000)
+        self.gamepad_pulse_frequency_step.setSingleStep(0.500000000000000)
+        self.gamepad_pulse_frequency_step.setValue(1.000000000000000)
+
+        self.formLayout_9.setWidget(5, QFormLayout.ItemRole.FieldRole, self.gamepad_pulse_frequency_step)
+
+        self.label_38 = QLabel(self.gb_gamepad)
+        self.label_38.setObjectName(u"label_38")
+
+        self.formLayout_9.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_38)
+
+        self.gamepad_pulse_width_step = QDoubleSpinBox(self.gb_gamepad)
+        self.gamepad_pulse_width_step.setObjectName(u"gamepad_pulse_width_step")
+        self.gamepad_pulse_width_step.setMinimum(0.010000000000000)
+        self.gamepad_pulse_width_step.setMaximum(10.000000000000000)
+        self.gamepad_pulse_width_step.setSingleStep(0.100000000000000)
+        self.gamepad_pulse_width_step.setValue(0.500000000000000)
+
+        self.formLayout_9.setWidget(6, QFormLayout.ItemRole.FieldRole, self.gamepad_pulse_width_step)
+
+        self.label_39 = QLabel(self.gb_gamepad)
+        self.label_39.setObjectName(u"label_39")
+
+        self.formLayout_9.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label_39)
+
+        self.gamepad_repeat_rate = QSpinBox(self.gb_gamepad)
+        self.gamepad_repeat_rate.setObjectName(u"gamepad_repeat_rate")
+        self.gamepad_repeat_rate.setMinimum(20)
+        self.gamepad_repeat_rate.setMaximum(1000)
+        self.gamepad_repeat_rate.setSingleStep(10)
+        self.gamepad_repeat_rate.setValue(100)
+
+        self.formLayout_9.setWidget(7, QFormLayout.ItemRole.FieldRole, self.gamepad_repeat_rate)
+
+
+        self.verticalLayout_10.addWidget(self.gb_gamepad)
+
+        self.gb_gamepad_buttons = QGroupBox(self.tab_gamepad)
+        self.gb_gamepad_buttons.setObjectName(u"gb_gamepad_buttons")
+        self.formLayout_11 = QFormLayout(self.gb_gamepad_buttons)
+        self.formLayout_11.setObjectName(u"formLayout_11")
+        self.label_40 = QLabel(self.gb_gamepad_buttons)
+        self.label_40.setObjectName(u"label_40")
+
+        self.formLayout_11.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_40)
+
+        self.gamepad_btn_carrier_up = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_carrier_up.setObjectName(u"gamepad_btn_carrier_up")
+
+        self.formLayout_11.setWidget(0, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_carrier_up)
+
+        self.label_41 = QLabel(self.gb_gamepad_buttons)
+        self.label_41.setObjectName(u"label_41")
+
+        self.formLayout_11.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_41)
+
+        self.gamepad_btn_carrier_down = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_carrier_down.setObjectName(u"gamepad_btn_carrier_down")
+
+        self.formLayout_11.setWidget(1, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_carrier_down)
+
+        self.label_42 = QLabel(self.gb_gamepad_buttons)
+        self.label_42.setObjectName(u"label_42")
+
+        self.formLayout_11.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_42)
+
+        self.gamepad_btn_volume_up = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_volume_up.setObjectName(u"gamepad_btn_volume_up")
+
+        self.formLayout_11.setWidget(2, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_volume_up)
+
+        self.label_43 = QLabel(self.gb_gamepad_buttons)
+        self.label_43.setObjectName(u"label_43")
+
+        self.formLayout_11.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_43)
+
+        self.gamepad_btn_volume_down = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_volume_down.setObjectName(u"gamepad_btn_volume_down")
+
+        self.formLayout_11.setWidget(3, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_volume_down)
+
+        self.label_44 = QLabel(self.gb_gamepad_buttons)
+        self.label_44.setObjectName(u"label_44")
+
+        self.formLayout_11.setWidget(4, QFormLayout.ItemRole.LabelRole, self.label_44)
+
+        self.gamepad_btn_pulse_freq_up = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_pulse_freq_up.setObjectName(u"gamepad_btn_pulse_freq_up")
+
+        self.formLayout_11.setWidget(4, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_pulse_freq_up)
+
+        self.label_45 = QLabel(self.gb_gamepad_buttons)
+        self.label_45.setObjectName(u"label_45")
+
+        self.formLayout_11.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_45)
+
+        self.gamepad_btn_pulse_freq_down = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_pulse_freq_down.setObjectName(u"gamepad_btn_pulse_freq_down")
+
+        self.formLayout_11.setWidget(5, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_pulse_freq_down)
+
+        self.label_46 = QLabel(self.gb_gamepad_buttons)
+        self.label_46.setObjectName(u"label_46")
+
+        self.formLayout_11.setWidget(6, QFormLayout.ItemRole.LabelRole, self.label_46)
+
+        self.gamepad_btn_pulse_width_up = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_pulse_width_up.setObjectName(u"gamepad_btn_pulse_width_up")
+
+        self.formLayout_11.setWidget(6, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_pulse_width_up)
+
+        self.label_47 = QLabel(self.gb_gamepad_buttons)
+        self.label_47.setObjectName(u"label_47")
+
+        self.formLayout_11.setWidget(7, QFormLayout.ItemRole.LabelRole, self.label_47)
+
+        self.gamepad_btn_pulse_width_down = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_pulse_width_down.setObjectName(u"gamepad_btn_pulse_width_down")
+
+        self.formLayout_11.setWidget(7, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_pulse_width_down)
+
+        self.label_48 = QLabel(self.gb_gamepad_buttons)
+        self.label_48.setObjectName(u"label_48")
+
+        self.formLayout_11.setWidget(8, QFormLayout.ItemRole.LabelRole, self.label_48)
+
+        self.gamepad_btn_shock = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_shock.setObjectName(u"gamepad_btn_shock")
+
+        self.formLayout_11.setWidget(8, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_shock)
+
+        self.label_51 = QLabel(self.gb_gamepad_buttons)
+        self.label_51.setObjectName(u"label_51")
+
+        self.formLayout_11.setWidget(9, QFormLayout.ItemRole.LabelRole, self.label_51)
+
+        self.gamepad_btn_mute = QComboBox(self.gb_gamepad_buttons)
+        self.gamepad_btn_mute.setObjectName(u"gamepad_btn_mute")
+
+        self.formLayout_11.setWidget(9, QFormLayout.ItemRole.FieldRole, self.gamepad_btn_mute)
+
+
+        self.verticalLayout_10.addWidget(self.gb_gamepad_buttons)
+
+        self.gb_gamepad_shock = QGroupBox(self.tab_gamepad)
+        self.gb_gamepad_shock.setObjectName(u"gb_gamepad_shock")
+        self.formLayout_12 = QFormLayout(self.gb_gamepad_shock)
+        self.formLayout_12.setObjectName(u"formLayout_12")
+        self.label_49 = QLabel(self.gb_gamepad_shock)
+        self.label_49.setObjectName(u"label_49")
+
+        self.formLayout_12.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_49)
+
+        self.gamepad_shock_volume = QDoubleSpinBox(self.gb_gamepad_shock)
+        self.gamepad_shock_volume.setObjectName(u"gamepad_shock_volume")
+        self.gamepad_shock_volume.setMinimum(0.000000000000000)
+        self.gamepad_shock_volume.setMaximum(100.000000000000000)
+        self.gamepad_shock_volume.setSingleStep(1.000000000000000)
+        self.gamepad_shock_volume.setValue(50.000000000000000)
+
+        self.formLayout_12.setWidget(0, QFormLayout.ItemRole.FieldRole, self.gamepad_shock_volume)
+
+        self.label_50 = QLabel(self.gb_gamepad_shock)
+        self.label_50.setObjectName(u"label_50")
+
+        self.formLayout_12.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_50)
+
+        self.gamepad_shock_duration = QSpinBox(self.gb_gamepad_shock)
+        self.gamepad_shock_duration.setObjectName(u"gamepad_shock_duration")
+        self.gamepad_shock_duration.setMinimum(50)
+        self.gamepad_shock_duration.setMaximum(5000)
+        self.gamepad_shock_duration.setSingleStep(50)
+        self.gamepad_shock_duration.setValue(500)
+
+        self.formLayout_12.setWidget(1, QFormLayout.ItemRole.FieldRole, self.gamepad_shock_duration)
+
+
+        self.verticalLayout_10.addWidget(self.gb_gamepad_shock)
+
+        self.verticalSpacer_7 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_10.addItem(self.verticalSpacer_7)
+
+        self.tabWidget.addTab(self.tab_gamepad, "")
 
         self.verticalLayout.addWidget(self.tabWidget)
 
@@ -690,9 +952,7 @@ class Ui_PreferencesDialog(object):
         QWidget.setTabOrder(self.focstim_refresh_serial_devices, self.focstim_ssid)
         QWidget.setTabOrder(self.focstim_ssid, self.focstim_password)
         QWidget.setTabOrder(self.focstim_password, self.focstim_sync)
-        QWidget.setTabOrder(self.focstim_sync, self.focstim_ip)
-        QWidget.setTabOrder(self.focstim_ip, self.focstim_read_ip)
-        QWidget.setTabOrder(self.focstim_read_ip, self.focstim_use_teleplot)
+        QWidget.setTabOrder(self.focstim_sync, self.focstim_use_teleplot)
         QWidget.setTabOrder(self.focstim_use_teleplot, self.focstim_teleplot_prefix)
         QWidget.setTabOrder(self.focstim_teleplot_prefix, self.focstim_dump_notifications)
         QWidget.setTabOrder(self.focstim_dump_notifications, self.tcp_port)
@@ -794,20 +1054,20 @@ class Ui_PreferencesDialog(object):
         self.label_14.setText(QCoreApplication.translate("PreferencesDialog", u"Serial port", None))
         self.focstim_refresh_serial_devices.setText(QCoreApplication.translate("PreferencesDialog", u"Refresh", None))
         self.groupBox_10.setTitle(QCoreApplication.translate("PreferencesDialog", u"Network", None))
-        self.label_22.setText(QCoreApplication.translate("PreferencesDialog", u"IP", None))
-        self.focstim_sync.setText(QCoreApplication.translate("PreferencesDialog", u"Sync with device", None))
+        self.focstim_sync.setText(QCoreApplication.translate("PreferencesDialog", u"Upload ssid/password", None))
         self.label_21.setText(QCoreApplication.translate("PreferencesDialog", u"Password", None))
-        self.focstim_read_ip.setText(QCoreApplication.translate("PreferencesDialog", u"Read from device", None))
         self.label_20.setText(QCoreApplication.translate("PreferencesDialog", u"SSID", None))
+        self.label_22.setText(QCoreApplication.translate("PreferencesDialog", u"IP", None))
+        self.focstim_read_ip.setText(QCoreApplication.translate("PreferencesDialog", u"Read from device", None))
         self.groupBox_9.setTitle(QCoreApplication.translate("PreferencesDialog", u"Advanced", None))
-        self.label_18.setText(QCoreApplication.translate("PreferencesDialog", u"Dump notifications to file", None))
-        self.focstim_dump_notifications.setText("")
+        self.label_15.setText(QCoreApplication.translate("PreferencesDialog", u"Use teleplot", None))
+        self.focstim_use_teleplot.setText("")
 #if QT_CONFIG(tooltip)
         self.label_16.setToolTip(QCoreApplication.translate("PreferencesDialog", u"Useful if you have multiple FOC-Stim boxes", None))
 #endif // QT_CONFIG(tooltip)
         self.label_16.setText(QCoreApplication.translate("PreferencesDialog", u"teleplot prefix (?)", None))
-        self.label_15.setText(QCoreApplication.translate("PreferencesDialog", u"Use teleplot", None))
-        self.focstim_use_teleplot.setText("")
+        self.label_18.setText(QCoreApplication.translate("PreferencesDialog", u"Dump notifications to file", None))
+        self.focstim_dump_notifications.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_foc), QCoreApplication.translate("PreferencesDialog", u"FOC-Stim", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("PreferencesDialog", u"NeoStim", None))
         self.neostim_refresh_serial_devices.setText(QCoreApplication.translate("PreferencesDialog", u"Refresh", None))
@@ -842,5 +1102,40 @@ class Ui_PreferencesDialog(object):
         ___qtablewidgetitem1 = self.patterns_table.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("PreferencesDialog", u"Enabled", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_patterns), QCoreApplication.translate("PreferencesDialog", u"Patterns", None))
+        self.gb_gamepad.setTitle(QCoreApplication.translate("PreferencesDialog", u"Gamepad", None))
+        self.label_28.setText(QCoreApplication.translate("PreferencesDialog", u"Dead zone (%)", None))
+        self.label_29.setText(QCoreApplication.translate("PreferencesDialog", u"Invert vertical", None))
+        self.gamepad_invert_vertical.setText("")
+        self.label_30.setText(QCoreApplication.translate("PreferencesDialog", u"Invert horizontal", None))
+        self.gamepad_invert_horizontal.setText("")
+        self.label_35.setText(QCoreApplication.translate("PreferencesDialog", u"Carrier step [Hz]", None))
+        self.label_36.setText(QCoreApplication.translate("PreferencesDialog", u"Volume step", None))
+        self.label_37.setText(QCoreApplication.translate("PreferencesDialog", u"Pulse freq step [Hz]", None))
+        self.label_38.setText(QCoreApplication.translate("PreferencesDialog", u"Pulse width step", None))
+        self.label_39.setText(QCoreApplication.translate("PreferencesDialog", u"Repeat rate [ms]", None))
+#if QT_CONFIG(tooltip)
+        self.label_39.setToolTip(QCoreApplication.translate("PreferencesDialog", u"How fast values change when holding buttons", None))
+#endif // QT_CONFIG(tooltip)
+        self.gb_gamepad_buttons.setTitle(QCoreApplication.translate("PreferencesDialog", u"Button Mapping", None))
+        self.label_40.setText(QCoreApplication.translate("PreferencesDialog", u"Carrier+ button", None))
+        self.label_41.setText(QCoreApplication.translate("PreferencesDialog", u"Carrier- button", None))
+        self.label_42.setText(QCoreApplication.translate("PreferencesDialog", u"Volume+ button", None))
+        self.label_43.setText(QCoreApplication.translate("PreferencesDialog", u"Volume- button", None))
+        self.label_44.setText(QCoreApplication.translate("PreferencesDialog", u"Pulse freq+ button", None))
+        self.label_45.setText(QCoreApplication.translate("PreferencesDialog", u"Pulse freq- button", None))
+        self.label_46.setText(QCoreApplication.translate("PreferencesDialog", u"Pulse width+ button", None))
+        self.label_47.setText(QCoreApplication.translate("PreferencesDialog", u"Pulse width- button", None))
+        self.label_48.setText(QCoreApplication.translate("PreferencesDialog", u"Shock button", None))
+        self.label_51.setText(QCoreApplication.translate("PreferencesDialog", u"Mute button", None))
+        self.gb_gamepad_shock.setTitle(QCoreApplication.translate("PreferencesDialog", u"Shock", None))
+        self.label_49.setText(QCoreApplication.translate("PreferencesDialog", u"Shock volume", None))
+#if QT_CONFIG(tooltip)
+        self.label_49.setToolTip(QCoreApplication.translate("PreferencesDialog", u"Target volume level during shock", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_50.setText(QCoreApplication.translate("PreferencesDialog", u"Shock duration [ms]", None))
+#if QT_CONFIG(tooltip)
+        self.label_50.setToolTip(QCoreApplication.translate("PreferencesDialog", u"How long the shock lasts before returning to normal volume", None))
+#endif // QT_CONFIG(tooltip)
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_gamepad), QCoreApplication.translate("PreferencesDialog", u"Gamepad", None))
     # retranslateUi
 

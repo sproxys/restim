@@ -28,6 +28,7 @@ import qt_ui.about_dialog
 import qt_ui.settings
 import net.serialproxy
 import net.buttplug_wsdm_client
+import net.gamepad
 from qt_ui import resources
 from qt_ui.models.funscript_kit import FunscriptKitModel
 from device.focstim.proto_device import FOCStimProtoDevice
@@ -158,6 +159,24 @@ class Window(QMainWindow, Ui_MainWindow):
 
         self.buttplug_wsdm_client = net.buttplug_wsdm_client.ButtplugWsdmClient(self)
         self.buttplug_wsdm_client.new_tcode_command.connect(self.tcode_command_router.route_command)
+
+        self.gamepad_handler = net.gamepad.GamepadHandler(self)
+        self.gamepad_handler.position_changed.connect(self.motion_3.mouse_event)
+        self.gamepad_handler.position_changed.connect(lambda a, b: self.motion_4.mouse_event(a, b, 0.0))
+        self.gamepad_handler.carrier_frequency_change.connect(self.gamepad_carrier_frequency_change)
+        self.gamepad_handler.volume_change.connect(self.gamepad_volume_change)
+        self.gamepad_handler.pulse_frequency_change.connect(self.gamepad_pulse_frequency_change)
+        self.gamepad_handler.pulse_width_change.connect(self.gamepad_pulse_width_change)
+        self.gamepad_handler.shock_triggered.connect(self.gamepad_shock_triggered)
+        self.gamepad_handler.shock_released.connect(self.gamepad_shock_released)
+        self.gamepad_handler.mute_triggered.connect(self.gamepad_mute_triggered)
+        self.gamepad_handler.refreshSettings()
+
+        # Shock state tracking
+        self._shock_pre_volume = None
+        # Mute state tracking
+        self._mute_pre_volume = None
+        self._is_muted = False
 
         self.tab_volume.set_monitor_axis([
             self.alpha,
@@ -556,6 +575,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.tcode_command_router.reload_kit()
         self.tab_volume.refreshSettings()
         self.buttplug_wsdm_client.refreshSettings()
+        self.gamepad_handler.refreshSettings()
         self.funscript_mapping_changed()  # reload funscript axis
         self.tab_a_b_testing.refreshSettings()
         self.motion_3.refreshSettings()
@@ -594,10 +614,78 @@ class Window(QMainWindow, Ui_MainWindow):
         self.tab_pulse_settings.save_settings()
         self.tab_volume.save_settings()
 
+    def gamepad_carrier_frequency_change(self, direction: int):
+        """Handle gamepad LB/RB for carrier frequency adjustment"""
+        step = qt_ui.settings.gamepad_carrier_step.get()
+        # Try pulse settings first (for pulse-based mode)
+        if self.tab_pulse_settings.isVisible():
+            current = self.tab_pulse_settings.carrier.value()
+            new_value = current + (direction * step)
+            self.tab_pulse_settings.carrier.setValue(new_value)
+        # Otherwise use continuous carrier settings
+        elif self.tab_carrier.isVisible():
+            current = self.tab_carrier.carrier.value()
+            new_value = current + (direction * step)
+            self.tab_carrier.carrier.setValue(new_value)
+
+    def gamepad_volume_change(self, direction: int):
+        """Handle gamepad D-pad Up/Down for volume adjustment"""
+        step = qt_ui.settings.gamepad_volume_step.get()
+        current = self.doubleSpinBox_volume.value()
+        new_value = max(0.0, current + (direction * step))
+        self.doubleSpinBox_volume.setValue(new_value)
+
+    def gamepad_pulse_frequency_change(self, direction: int):
+        """Handle gamepad D-pad Left/Right for pulse frequency adjustment"""
+        step = qt_ui.settings.gamepad_pulse_frequency_step.get()
+        if self.tab_pulse_settings.isVisible():
+            current = self.tab_pulse_settings.pulse_freq_slider.value()
+            new_value = current + (direction * step)
+            self.tab_pulse_settings.pulse_freq_slider.setValue(new_value)
+
+    def gamepad_pulse_width_change(self, direction: int):
+        """Handle gamepad button for pulse width adjustment"""
+        step = qt_ui.settings.gamepad_pulse_width_step.get()
+        if self.tab_pulse_settings.isVisible():
+            current = self.tab_pulse_settings.pulse_width_slider.value()
+            new_value = current + (direction * step)
+            self.tab_pulse_settings.pulse_width_slider.setValue(new_value)
+
+    def gamepad_shock_triggered(self):
+        """Handle gamepad shock button press - raise volume while held"""
+        # Only store volume if not already in shock
+        if self._shock_pre_volume is None:
+            self._shock_pre_volume = self.doubleSpinBox_volume.value()
+
+        # Set volume to shock level
+        shock_volume = qt_ui.settings.gamepad_shock_volume.get()
+        self.doubleSpinBox_volume.setValue(shock_volume)
+
+    def gamepad_shock_released(self):
+        """Handle gamepad shock button release - restore volume"""
+        if self._shock_pre_volume is not None:
+            self.doubleSpinBox_volume.setValue(self._shock_pre_volume)
+            self._shock_pre_volume = None
+
+    def gamepad_mute_triggered(self):
+        """Handle gamepad mute button - toggle mute"""
+        if self._is_muted:
+            # Unmute - restore previous volume
+            if self._mute_pre_volume is not None:
+                self.doubleSpinBox_volume.setValue(self._mute_pre_volume)
+                self._mute_pre_volume = None
+            self._is_muted = False
+        else:
+            # Mute - store current volume and set to 0
+            self._mute_pre_volume = self.doubleSpinBox_volume.value()
+            self.doubleSpinBox_volume.setValue(0.0)
+            self._is_muted = True
+
     def closeEvent(self, event):
         logger.warning('Shutting down')
         if self.output_device is not None:
             self.output_device.stop()
+        self.gamepad_handler.set_enabled(False)
         self.save_settings()
         event.accept()
 

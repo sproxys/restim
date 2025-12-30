@@ -193,3 +193,31 @@ class DictSetting(Setting):
             get_settings_instance().sync()
 
 pattern_enabled = DictSetting("patterns/enabled", {})
+
+# Gamepad settings
+gamepad_enabled = Setting("gamepad/enabled", False, bool)
+gamepad_dead_zone = Setting("gamepad/dead_zone", 0.15, float)
+gamepad_invert_vertical = Setting("gamepad/invert_vertical", False, bool)
+gamepad_invert_horizontal = Setting("gamepad/invert_horizontal", False, bool)
+gamepad_carrier_step = Setting("gamepad/carrier_step", 10.0, float)  # Hz per button press
+gamepad_volume_step = Setting("gamepad/volume_step", 1.0, float)  # per button press
+gamepad_pulse_frequency_step = Setting("gamepad/pulse_frequency_step", 1.0, float)  # Hz per button press
+gamepad_pulse_width_step = Setting("gamepad/pulse_width_step", 0.5, float)  # carrier cycles per full trigger
+gamepad_repeat_rate = Setting("gamepad/repeat_rate", 100, int)  # milliseconds between repeats when holding button
+
+# Gamepad button mappings (button identifiers)
+# Available buttons: lb, rb, a, b, x, y, dpad_up, dpad_down, dpad_left, dpad_right, start, select, l3, r3, lt, rt, none
+gamepad_btn_carrier_up = Setting("gamepad/btn_carrier_up", "rb", str)
+gamepad_btn_carrier_down = Setting("gamepad/btn_carrier_down", "lb", str)
+gamepad_btn_volume_up = Setting("gamepad/btn_volume_up", "dpad_up", str)
+gamepad_btn_volume_down = Setting("gamepad/btn_volume_down", "dpad_down", str)
+gamepad_btn_pulse_freq_up = Setting("gamepad/btn_pulse_freq_up", "dpad_right", str)
+gamepad_btn_pulse_freq_down = Setting("gamepad/btn_pulse_freq_down", "dpad_left", str)
+gamepad_btn_pulse_width_up = Setting("gamepad/btn_pulse_width_up", "rt", str)
+gamepad_btn_pulse_width_down = Setting("gamepad/btn_pulse_width_down", "lt", str)
+gamepad_btn_shock = Setting("gamepad/btn_shock", "a", str)
+gamepad_btn_mute = Setting("gamepad/btn_mute", "b", str)
+
+# Gamepad shock settings
+gamepad_shock_volume = Setting("gamepad/shock_volume", 50.0, float)  # target volume during shock
+gamepad_shock_duration = Setting("gamepad/shock_duration", 500, int)  # milliseconds
