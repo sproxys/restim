@@ -3,7 +3,9 @@ import logging
 
 import google.protobuf.text_format
 from PySide6.QtSerialPort import QSerialPortInfo
-from PySide6.QtWidgets import QDialog, QAbstractButton, QDialogButtonBox, QAbstractItemView, QHeaderView, QComboBox, QTableWidgetItem, QCheckBox, QApplication
+from PySide6.QtWidgets import (QDialog, QAbstractButton, QDialogButtonBox, QAbstractItemView,
+                                QHeaderView, QComboBox, QTableWidgetItem, QCheckBox, QApplication,
+                                QGroupBox, QFormLayout, QLabel, QSpinBox, QLineEdit)
 from PySide6.QtCore import Qt, Signal, QTimer
 
 from qt_ui.preferences_dialog_ui import Ui_PreferencesDialog
@@ -28,6 +30,12 @@ class PreferencesDialog(QDialog, Ui_PreferencesDialog):
         self.pattern_service = PatternControlService()
         self._cached_patterns = None
         self._cache_patterns_data()
+
+        # Create Web UI server group box before loadSettings
+        self._create_webui_settings()
+
+        # Create Remote Control settings
+        self._create_remote_control_settings()
 
         self.loadSettings()
 
@@ -75,6 +83,133 @@ class PreferencesDialog(QDialog, Ui_PreferencesDialog):
         # focstim buttons
         self.focstim_read_ip.clicked.connect(self.read_focstim_ip)
         self.focstim_sync.clicked.connect(self.upload_focstim_ssid)
+
+    def _create_webui_settings(self):
+        """Create Web UI server settings widgets dynamically."""
+        # Create the group box
+        self.gb_webui = QGroupBox("Web UI Server")
+        self.gb_webui.setCheckable(True)
+        self.gb_webui.setChecked(False)
+
+        # Create form layout
+        form = QFormLayout(self.gb_webui)
+
+        # Port
+        self.webui_port = QSpinBox()
+        self.webui_port.setMinimum(1)
+        self.webui_port.setMaximum(65535)
+        self.webui_port.setValue(8080)
+        form.addRow("Port:", self.webui_port)
+
+        # Localhost only
+        self.webui_localhost_only = QCheckBox()
+        self.webui_localhost_only.setChecked(True)
+        form.addRow("Localhost only:", self.webui_localhost_only)
+
+        # Username
+        self.webui_username = QLineEdit()
+        self.webui_username.setText("admin")
+        form.addRow("Username:", self.webui_username)
+
+        # Password
+        self.webui_password = QLineEdit()
+        self.webui_password.setEchoMode(QLineEdit.Password)
+        self.webui_password.setPlaceholderText("Leave empty to disable auth")
+        form.addRow("Password:", self.webui_password)
+
+        # Info label
+        info_label = QLabel("WebSocket port: HTTP port + 1. Restart required after changes.")
+        info_label.setStyleSheet("color: gray; font-size: 10px;")
+        form.addRow("", info_label)
+
+        # Insert into the network tab layout (after buttplug_wsdm group)
+        # Find the position after gb_buttplug_wsdm
+        layout = self.tab_network.layout()
+        if layout:
+            # Insert before the spacer (which is typically at the end)
+            layout.insertWidget(layout.count() - 1, self.gb_webui)
+
+    def _create_remote_control_settings(self):
+        """Create Remote Control settings widgets dynamically."""
+        from PySide6.QtWidgets import (QPushButton, QVBoxLayout, QHBoxLayout,
+                                        QListWidget, QListWidgetItem, QInputDialog,
+                                        QMessageBox, QWidget)
+
+        # Create the group box
+        self.gb_remote_control = QGroupBox("Remote Control (Control Other Instances)")
+        self.gb_remote_control.setCheckable(True)
+        self.gb_remote_control.setChecked(False)
+
+        # Main layout
+        main_layout = QVBoxLayout(self.gb_remote_control)
+
+        # Sync options
+        sync_form = QFormLayout()
+
+        self.remote_sync_position = QCheckBox()
+        self.remote_sync_position.setChecked(True)
+        sync_form.addRow("Sync Position:", self.remote_sync_position)
+
+        self.remote_sync_volume = QCheckBox()
+        self.remote_sync_volume.setChecked(True)
+        sync_form.addRow("Sync Volume:", self.remote_sync_volume)
+
+        self.remote_sync_carrier = QCheckBox()
+        self.remote_sync_carrier.setChecked(True)
+        sync_form.addRow("Sync Carrier:", self.remote_sync_carrier)
+
+        self.remote_sync_play_state = QCheckBox()
+        self.remote_sync_play_state.setChecked(True)
+        sync_form.addRow("Sync Play/Stop:", self.remote_sync_play_state)
+
+        main_layout.addLayout(sync_form)
+
+        # Instance list
+        instances_label = QLabel("Remote Instances:")
+        main_layout.addWidget(instances_label)
+
+        self.remote_instances_list = QListWidget()
+        self.remote_instances_list.setMaximumHeight(100)
+        main_layout.addWidget(self.remote_instances_list)
+
+        # Buttons
+        btn_layout = QHBoxLayout()
+        self.remote_add_btn = QPushButton("Add")
+        self.remote_remove_btn = QPushButton("Remove")
+        btn_layout.addWidget(self.remote_add_btn)
+        btn_layout.addWidget(self.remote_remove_btn)
+        btn_layout.addStretch()
+        main_layout.addLayout(btn_layout)
+
+        # Connect buttons
+        self.remote_add_btn.clicked.connect(self._add_remote_instance)
+        self.remote_remove_btn.clicked.connect(self._remove_remote_instance)
+
+        # Info label
+        info_label = QLabel("Enter URLs like: http://192.168.1.100:8080")
+        info_label.setStyleSheet("color: gray; font-size: 10px;")
+        main_layout.addWidget(info_label)
+
+        # Insert into the network tab layout
+        layout = self.tab_network.layout()
+        if layout:
+            layout.insertWidget(layout.count() - 1, self.gb_remote_control)
+
+    def _add_remote_instance(self):
+        """Add a new remote instance."""
+        from PySide6.QtWidgets import QInputDialog
+        url, ok = QInputDialog.getText(self, "Add Remote Instance",
+                                        "Enter URL (e.g., http://192.168.1.100:8080):")
+        if ok and url:
+            url = url.strip()
+            if url:
+                self.remote_instances_list.addItem(url)
+
+    def _remove_remote_instance(self):
+        """Remove selected remote instance."""
+        current = self.remote_instances_list.currentRow()
+        if current >= 0:
+            self.remote_instances_list.takeItem(current)
 
     def _cache_patterns_data(self):
         """Cache pattern data at startup to avoid late discovery issues"""
@@ -134,6 +269,13 @@ class PreferencesDialog(QDialog, Ui_PreferencesDialog):
         self.buttplug_wsdm_address.setText(qt_ui.settings.buttplug_wsdm_address.get())
         self.buttplug_wsdm_auto_expand.setChecked(qt_ui.settings.buttplug_wsdm_auto_expand.get())
 
+        # web ui server settings
+        self.gb_webui.setChecked(qt_ui.settings.webui_enabled.get())
+        self.webui_port.setValue(qt_ui.settings.webui_port.get())
+        self.webui_localhost_only.setChecked(qt_ui.settings.webui_localhost_only.get())
+        self.webui_username.setText(qt_ui.settings.webui_username.get())
+        self.webui_password.setText(qt_ui.settings.webui_password.get())
+
         # gamepad settings
         self.gb_gamepad.setChecked(qt_ui.settings.gamepad_enabled.get())
         self.gamepad_dead_zone.setValue(int(qt_ui.settings.gamepad_dead_zone.get() * 100))
@@ -177,6 +319,25 @@ class PreferencesDialog(QDialog, Ui_PreferencesDialog):
         self._setup_gamepad_button_combo(self.gamepad_btn_mute, qt_ui.settings.gamepad_btn_mute.get())
         self.gamepad_shock_volume.setValue(qt_ui.settings.gamepad_shock_volume.get())
         self.gamepad_shock_duration.setValue(qt_ui.settings.gamepad_shock_duration.get())
+
+        # remote control settings
+        self.gb_remote_control.setChecked(qt_ui.settings.remote_control_enabled.get())
+        self.remote_sync_position.setChecked(qt_ui.settings.remote_control_sync_position.get())
+        self.remote_sync_volume.setChecked(qt_ui.settings.remote_control_sync_volume.get())
+        self.remote_sync_carrier.setChecked(qt_ui.settings.remote_control_sync_carrier.get())
+        self.remote_sync_play_state.setChecked(qt_ui.settings.remote_control_sync_play_state.get())
+        # Load remote instances
+        import json
+        try:
+            instances_json = qt_ui.settings.remote_control_instances.get()
+            instances = json.loads(instances_json)
+            self.remote_instances_list.clear()
+            for instance in instances:
+                url = instance.get('url', '') if isinstance(instance, dict) else str(instance)
+                if url:
+                    self.remote_instances_list.addItem(url)
+        except Exception:
+            pass
 
         # audio settings
         hostapi_name = qt_ui.settings.audio_api.get()
@@ -352,6 +513,13 @@ class PreferencesDialog(QDialog, Ui_PreferencesDialog):
         qt_ui.settings.buttplug_wsdm_address.set(self.buttplug_wsdm_address.text())
         qt_ui.settings.buttplug_wsdm_auto_expand.set(self.buttplug_wsdm_auto_expand.isChecked())
 
+        # web ui server
+        qt_ui.settings.webui_enabled.set(self.gb_webui.isChecked())
+        qt_ui.settings.webui_port.set(self.webui_port.value())
+        qt_ui.settings.webui_localhost_only.set(self.webui_localhost_only.isChecked())
+        qt_ui.settings.webui_username.set(self.webui_username.text())
+        qt_ui.settings.webui_password.set(self.webui_password.text())
+
         # gamepad
         qt_ui.settings.gamepad_enabled.set(self.gb_gamepad.isChecked())
         qt_ui.settings.gamepad_dead_zone.set(self.gamepad_dead_zone.value() / 100.0)
@@ -374,6 +542,20 @@ class PreferencesDialog(QDialog, Ui_PreferencesDialog):
         qt_ui.settings.gamepad_btn_mute.set(self._get_gamepad_button_combo_value(self.gamepad_btn_mute))
         qt_ui.settings.gamepad_shock_volume.set(self.gamepad_shock_volume.value())
         qt_ui.settings.gamepad_shock_duration.set(self.gamepad_shock_duration.value())
+
+        # remote control
+        qt_ui.settings.remote_control_enabled.set(self.gb_remote_control.isChecked())
+        qt_ui.settings.remote_control_sync_position.set(self.remote_sync_position.isChecked())
+        qt_ui.settings.remote_control_sync_volume.set(self.remote_sync_volume.isChecked())
+        qt_ui.settings.remote_control_sync_carrier.set(self.remote_sync_carrier.isChecked())
+        qt_ui.settings.remote_control_sync_play_state.set(self.remote_sync_play_state.isChecked())
+        # Save remote instances as JSON
+        import json
+        instances = []
+        for i in range(self.remote_instances_list.count()):
+            url = self.remote_instances_list.item(i).text()
+            instances.append({'url': url, 'enabled': True})
+        qt_ui.settings.remote_control_instances.set(json.dumps(instances))
 
         # audio devices
         qt_ui.settings.audio_api.set(self.audio_api.currentText())

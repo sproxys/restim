@@ -153,6 +153,13 @@ serial_enabled = Setting("network/serial-enabled", False, bool)
 serial_port = Setting("network/serial-port", "COM20", str)
 serial_auto_expand = Setting("network/serial-auto-expand", True, bool)
 
+# Web UI server settings
+webui_enabled = Setting("network/webui-enabled", False, bool)
+webui_port = Setting("network/webui-port", 8080, int)
+webui_localhost_only = Setting("network/webui-localhost-only", True, bool)
+webui_username = Setting("network/webui-username", "admin", str)
+webui_password = Setting("network/webui-password", "", str)  # Empty = no auth required
+
 
 focstim_serial_port = Setting("focstim/serial_port", '', str)
 focstim_use_teleplot = Setting("focstim/use-teleplot", True, bool)
@@ -221,3 +228,11 @@ gamepad_btn_mute = Setting("gamepad/btn_mute", "b", str)
 # Gamepad shock settings
 gamepad_shock_volume = Setting("gamepad/shock_volume", 50.0, float)  # target volume during shock
 gamepad_shock_duration = Setting("gamepad/shock_duration", 500, int)  # milliseconds
+
+# Remote control settings
+remote_control_enabled = Setting("remote_control/enabled", False, bool)
+remote_control_sync_position = Setting("remote_control/sync_position", True, bool)
+remote_control_sync_volume = Setting("remote_control/sync_volume", True, bool)
+remote_control_sync_carrier = Setting("remote_control/sync_carrier", True, bool)
+remote_control_sync_play_state = Setting("remote_control/sync_play_state", True, bool)
+remote_control_instances = Setting("remote_control/instances", "[]", str)  # JSON array of instances

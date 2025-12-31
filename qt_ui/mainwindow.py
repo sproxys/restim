@@ -29,6 +29,8 @@ import qt_ui.settings
 import net.serialproxy
 import net.buttplug_wsdm_client
 import net.gamepad
+import net.webserver
+import net.remote_control
 from qt_ui import resources
 from qt_ui.models.funscript_kit import FunscriptKitModel
 from device.focstim.proto_device import FOCStimProtoDevice
@@ -171,6 +173,12 @@ class Window(QMainWindow, Ui_MainWindow):
         self.gamepad_handler.shock_released.connect(self.gamepad_shock_released)
         self.gamepad_handler.mute_triggered.connect(self.gamepad_mute_triggered)
         self.gamepad_handler.refreshSettings()
+
+        self.webui_server = net.webserver.WebUIServer(self, self)
+
+        # Remote control client for controlling other Restim instances
+        self.remote_control = net.remote_control.RemoteControlClient(self)
+        self._init_remote_control()
 
         # Shock state tracking
         self._shock_pre_volume = None
@@ -507,6 +515,11 @@ class Window(QMainWindow, Ui_MainWindow):
         else:
             raise RuntimeError("Unknown device type")
 
+        # Broadcast play state to web UI clients and remote instances
+        if self.playstate == PlayState.PLAYING:
+            self.webui_server.broadcast_play_state(self.playstate)
+            self.remote_control_send_play()
+
     def signal_stop(self, new_playstate: PlayState = PlayState.STOPPED):
         if self.output_device is not None:
             self.output_device.stop()
@@ -514,6 +527,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.playstate = new_playstate
         self.tab_volume.set_play_state(self.playstate)
         self.refresh_play_button_icon()
+        self.webui_server.broadcast_play_state(self.playstate)
+        self.remote_control_send_stop()
 
     def autostart_timeout(self):
         print('autostart timeout')
@@ -581,6 +596,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motion_3.refreshSettings()
         self.motion_4.refreshSettings()
         self.refresh_pattern_combobox()
+        self._refresh_remote_control()
 
     def refresh_pattern_combobox(self):
         config = DeviceConfiguration.from_settings()
@@ -681,11 +697,87 @@ class Window(QMainWindow, Ui_MainWindow):
             self.doubleSpinBox_volume.setValue(0.0)
             self._is_muted = True
 
+    def _init_remote_control(self):
+        """Initialize the remote control client."""
+        self._refresh_remote_control()
+
+        # Timer for sending position updates to remote instances (~30Hz)
+        self._remote_position_timer = QTimer(self)
+        self._remote_position_timer.timeout.connect(self._remote_broadcast_position)
+        self._remote_position_timer.start(33)
+
+        if qt_ui.settings.remote_control_enabled.get():
+            self.remote_control.start()
+
+    def _remote_broadcast_position(self):
+        """Send current position to remote instances."""
+        if qt_ui.settings.remote_control_enabled.get() and qt_ui.settings.remote_control_sync_position.get():
+            if self.remote_control.get_connected_count() > 0:
+                self.remote_control.send_position(
+                    self.alpha.last_value(),
+                    self.beta.last_value(),
+                    self.gamma.last_value()
+                )
+
+    def _refresh_remote_control(self):
+        """Refresh remote control settings."""
+        import json
+        from net.remote_control import RemoteInstance
+
+        # Load instances from settings
+        try:
+            instances_json = qt_ui.settings.remote_control_instances.get()
+            instances_data = json.loads(instances_json)
+            instances = []
+            for data in instances_data:
+                instances.append(RemoteInstance(
+                    url=data.get('url', ''),
+                    enabled=data.get('enabled', True),
+                    username=data.get('username', ''),
+                    password=data.get('password', '')
+                ))
+            self.remote_control.set_instances(instances)
+        except Exception as e:
+            logger.warning(f"Failed to load remote control instances: {e}")
+
+        # Start or stop based on enabled setting
+        if qt_ui.settings.remote_control_enabled.get():
+            self.remote_control.start()
+        else:
+            self.remote_control.stop()
+
+    def remote_control_send_position(self, alpha: float, beta: float):
+        """Send position update to remote instances."""
+        if qt_ui.settings.remote_control_enabled.get() and qt_ui.settings.remote_control_sync_position.get():
+            self.remote_control.send_position(alpha, beta, self.gamma.last_value())
+
+    def remote_control_send_volume(self, value: float):
+        """Send volume update to remote instances."""
+        if qt_ui.settings.remote_control_enabled.get() and qt_ui.settings.remote_control_sync_volume.get():
+            self.remote_control.send_volume(value)
+
+    def remote_control_send_carrier(self, frequency: float):
+        """Send carrier frequency update to remote instances."""
+        if qt_ui.settings.remote_control_enabled.get() and qt_ui.settings.remote_control_sync_carrier.get():
+            self.remote_control.send_carrier(frequency)
+
+    def remote_control_send_play(self):
+        """Send play command to remote instances."""
+        if qt_ui.settings.remote_control_enabled.get() and qt_ui.settings.remote_control_sync_play_state.get():
+            self.remote_control.send_play()
+
+    def remote_control_send_stop(self):
+        """Send stop command to remote instances."""
+        if qt_ui.settings.remote_control_enabled.get() and qt_ui.settings.remote_control_sync_play_state.get():
+            self.remote_control.send_stop()
+
     def closeEvent(self, event):
         logger.warning('Shutting down')
         if self.output_device is not None:
             self.output_device.stop()
         self.gamepad_handler.set_enabled(False)
+        self.webui_server.stop()
+        self.remote_control.stop()
         self.save_settings()
         event.accept()
 

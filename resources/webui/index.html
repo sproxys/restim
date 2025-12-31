@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restim Control</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Restim Control</h1>
+        <div id="connection-status" class="status-disconnected">Disconnected</div>
+    </header>
+
+    <main>
+        <!-- Playback Controls -->
+        <section id="playback-controls" class="control-section">
+            <h2>Playback</h2>
+            <div class="button-group">
+                <button id="btn-play" class="btn btn-primary">Play</button>
+                <button id="btn-stop" class="btn btn-secondary">Stop</button>
+            </div>
+            <div id="play-state" class="status-text">STOPPED</div>
+        </section>
+
+        <!-- Volume Control -->
+        <section id="volume-control" class="control-section">
+            <h2>Volume</h2>
+            <div class="slider-group">
+                <input type="range" id="volume" min="0" max="100" step="1" value="10">
+                <span id="volume-value" class="value-display">10%</span>
+            </div>
+        </section>
+
+        <!-- Position Control -->
+        <section id="position-control" class="control-section">
+            <h2>Position</h2>
+            <div class="position-options">
+                <label><input type="checkbox" id="invert-horizontal"> Invert Horizontal</label>
+                <label><input type="checkbox" id="invert-vertical"> Invert Vertical</label>
+            </div>
+            <div class="position-container">
+                <canvas id="position-canvas" width="200" height="200"></canvas>
+                <div class="position-sliders">
+                    <div class="slider-group">
+                        <label>Alpha:</label>
+                        <input type="range" id="alpha" min="-100" max="100" step="1" value="0">
+                        <span id="alpha-value" class="value-display">0.00</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>Beta:</label>
+                        <input type="range" id="beta" min="-100" max="100" step="1" value="0">
+                        <span id="beta-value" class="value-display">0.00</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>Gamma:</label>
+                        <input type="range" id="gamma" min="-100" max="100" step="1" value="0">
+                        <span id="gamma-value" class="value-display">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pattern Control -->
+        <section id="pattern-control" class="control-section">
+            <h2>Pattern</h2>
+            <div class="control-row">
+                <select id="pattern-select"></select>
+            </div>
+            <div class="slider-group">
+                <label>Velocity:</label>
+                <input type="range" id="velocity" min="0.1" max="10" step="0.1" value="1">
+                <span id="velocity-value" class="value-display">1.0</span>
+            </div>
+        </section>
+
+        <!-- Carrier Frequency -->
+        <section id="carrier-control" class="control-section">
+            <h2>Carrier Frequency</h2>
+            <div class="slider-group">
+                <input type="range" id="carrier" min="300" max="2000" step="10" value="700">
+                <span id="carrier-value" class="value-display">700 Hz</span>
+            </div>
+        </section>
+
+        <!-- Pulse Settings -->
+        <section id="pulse-control" class="control-section collapsible">
+            <h2 class="collapsible-header">Pulse Settings <span class="collapse-icon">+</span></h2>
+            <div class="collapsible-content">
+                <div class="slider-group">
+                    <label>Frequency:</label>
+                    <input type="range" id="pulse-freq" min="1" max="100" step="1" value="50">
+                    <span id="pulse-freq-value" class="value-display">50 Hz</span>
+                </div>
+                <div class="slider-group">
+                    <label>Width:</label>
+                    <input type="range" id="pulse-width" min="1" max="20" step="0.5" value="5">
+                    <span id="pulse-width-value" class="value-display">5</span>
+                </div>
+                <div class="slider-group">
+                    <label>Rise Time:</label>
+                    <input type="range" id="pulse-rise" min="0.5" max="20" step="0.5" value="10">
+                    <span id="pulse-rise-value" class="value-display">10 ms</span>
+                </div>
+                <div class="slider-group">
+                    <label>Random:</label>
+                    <input type="range" id="pulse-random" min="0" max="100" step="1" value="10">
+                    <span id="pulse-random-value" class="value-display">10%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vibration Settings -->
+        <section id="vibration-control" class="control-section collapsible">
+            <h2 class="collapsible-header">Vibration <span class="collapse-icon">+</span></h2>
+            <div class="collapsible-content">
+                <div class="vibration-channel">
+                    <h3>
+                        <label><input type="checkbox" id="vib1-enabled"> Vibration 1</label>
+                    </h3>
+                    <div class="slider-group">
+                        <label>Frequency:</label>
+                        <input type="range" id="vib1-freq" min="0" max="100" step="1" value="10">
+                        <span id="vib1-freq-value" class="value-display">10 Hz</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>Strength:</label>
+                        <input type="range" id="vib1-strength" min="0" max="100" step="1" value="50">
+                        <span id="vib1-strength-value" class="value-display">50%</span>
+                    </div>
+                </div>
+                <div class="vibration-channel">
+                    <h3>
+                        <label><input type="checkbox" id="vib2-enabled"> Vibration 2</label>
+                    </h3>
+                    <div class="slider-group">
+                        <label>Frequency:</label>
+                        <input type="range" id="vib2-freq" min="0" max="100" step="1" value="2">
+                        <span id="vib2-freq-value" class="value-display">2 Hz</span>
+                    </div>
+                    <div class="slider-group">
+                        <label>Strength:</label>
+                        <input type="range" id="vib2-strength" min="0" max="100" step="1" value="30">
+                        <span id="vib2-strength-value" class="value-display">30%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Device Info -->
+        <section id="device-info" class="control-section">
+            <h2>Device</h2>
+            <div id="device-type" class="info-text">-</div>
+            <div id="waveform-type" class="info-text">-</div>
+        </section>
+
+        <!-- Gamepad Settings -->
+        <section id="gamepad-control" class="control-section collapsible">
+            <h2 class="collapsible-header">Gamepad <span id="gamepad-status" class="gamepad-status"></span> <span class="collapse-icon">+</span></h2>
+            <div class="collapsible-content">
+                <div class="checkbox-row">
+                    <label><input type="checkbox" id="gamepad-enabled"> Enable Gamepad</label>
+                </div>
+                <div class="slider-group">
+                    <label>Dead Zone:</label>
+                    <input type="range" id="gamepad-deadzone" min="0" max="50" step="1" value="15">
+                    <span id="gamepad-deadzone-value" class="value-display">15%</span>
+                </div>
+                <div class="checkbox-row">
+                    <label><input type="checkbox" id="gamepad-invert-h"> Invert Horizontal</label>
+                    <label><input type="checkbox" id="gamepad-invert-v"> Invert Vertical</label>
+                </div>
+                <div class="gamepad-info">
+                    <strong>Controls:</strong>
+                    <ul>
+                        <li>Left Stick: Position (Alpha/Beta)</li>
+                        <li>D-Pad Up/Down: Volume</li>
+                        <li>D-Pad Left/Right: Pulse Frequency</li>
+                        <li>LB/RB: Carrier Frequency</li>
+                        <li>LT/RT: Pulse Width</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Restim Web UI v1.0</p>
+    </footer>
+
+    <script src="js/websocket.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/gamepad.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
